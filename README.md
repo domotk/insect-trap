@@ -83,6 +83,11 @@ the integration's options.
 `insect_trap_mode_detected`. They fire whether or not persistent notifications
 are switched on, so automations keep working either way.
 
+## Installation
+
+HACS → three-dot menu → *Custom repositories* → this repository, category
+*Integration*. Then install and restart Home Assistant.
+
 ## Setting it up
 
 Add the integration, give the trap a name and pick the switch that powers it,
@@ -94,11 +99,6 @@ The refill type and the available modes come from a small built-in catalogue
 not listed can be typed by hand, and the catalogue marks any figure that could
 not be confirmed.
 
-## Installation
-
-HACS → three-dot menu → *Custom repositories* → this repository, category
-*Integration*. Then install and restart Home Assistant.
-
 ## Diagnostics
 
 The device page offers a download with the tally, the mode detector's state and
@@ -107,9 +107,15 @@ without asking anyone to read attributes off a screen.
 
 ## The card
 
-The Lovelace card that goes with this lives in its own repository, because HACS
-treats a repository as one category and this one is an integration. The
-integration is perfectly usable without it.
+[Insect Trap Card][card] draws the appliance with its bottle at the level the
+refill is really at, its indicator lit in the colour of the mode, and vapour
+rising only while it is working.
+
+![The companion card](docs/card.jpg)
+
+It lives in its own repository because HACS treats a repository as one category
+and this one is an integration. The integration is perfectly usable without it:
+every figure the card shows is an entity you can put in any dashboard.
 
 ## Built with
 
@@ -123,6 +129,7 @@ Home Assistant's own integration validator, and by the
 MIT. The catalogue figures are referenced to their sources inside
 `catalog.json`; product names belong to their respective owners.
 
+[card]: https://github.com/domotk/insect-trap-card
 [hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg
 [hacs-url]: https://github.com/hacs/integration
 [release-badge]: https://img.shields.io/github/v/release/domotk/insect-trap
