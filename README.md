@@ -1,5 +1,10 @@
 # Insect Traps
 
+[![hacs][hacs-badge]][hacs-url]
+[![release][release-badge]][release-url]
+[![validate][validate-badge]][validate-url]
+[![licence][licence-badge]](LICENSE)
+
 Tracks the refill of a plug-in insect trap by **the hours it actually runs**,
 not by days on a calendar.
 
@@ -117,3 +122,11 @@ Home Assistant's own integration validator, and by the
 
 MIT. The catalogue figures are referenced to their sources inside
 `catalog.json`; product names belong to their respective owners.
+
+[hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg
+[hacs-url]: https://github.com/hacs/integration
+[release-badge]: https://img.shields.io/github/v/release/domotk/insect-trap
+[release-url]: https://github.com/domotk/insect-trap/releases
+[validate-badge]: https://github.com/domotk/insect-trap/actions/workflows/validate.yml/badge.svg
+[validate-url]: https://github.com/domotk/insect-trap/actions/workflows/validate.yml
+[licence-badge]: https://img.shields.io/github/license/domotk/insect-trap
