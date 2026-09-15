@@ -92,6 +92,25 @@ DEFAULT_TYPE = "liquid"
 DEFAULT_TARGET = "mosquitos"
 DEFAULT_MODE_FACTOR = 1.0
 
+# --- when a measured pace means anything ---------------------------------
+# Everything about "how long is left" is a division by hours-per-day, and a
+# division by a tiny number explodes. A refill fitted yesterday and switched on
+# for twenty seconds gives 0.01 h/day, and from there: 36000 nights left and a
+# depletion date in the next century, printed in earnest. The estimate then
+# moves every minute — far enough out that rounding to the quarter hour stops
+# absorbing it — and because the recorder rewrites a sensor's whole attribute
+# bundle whenever one attribute changes, a single trap wrote about fifteen
+# hundred rows a day saying nothing.
+#
+# So a pace has to earn the right to be used, and both floors are needed: the
+# days floor rejects a refill fitted an hour ago, the hours floor rejects one
+# fitted last week and run for twenty seconds. Until then the box's own figure
+# is the honest answer, and it is the one the box was sold on.
+PACE_MIN_DAYS = 1.0
+PACE_MIN_HOURS = 4.0
+PACE_MEASURED = "measured"
+PACE_NOMINAL = "nominal"
+
 TYPES = ["liquid", "tablet", "other"]
 # A refill is sold for mosquitoes, for mosquitoes and flies, or for a wider mix.
 TARGETS = ["mosquitos", "mosquitos_moscas", "varios"]

@@ -71,6 +71,9 @@ async def async_get_config_entry_diagnostics(
             tracker.last_replaced.isoformat() if tracker.last_replaced else None
         ),
         "avg_hours_per_day": tracker.avg_hours_per_day,
+        "nightly_hours": tracker.nightly_hours,
+        "pace_basis": tracker.pace_basis,
+        "nights_left": tracker.nights_left,
         # what the mode detector sees
         "auto_mode": tracker.auto_mode,
         "notify_enabled": tracker.notify_enabled,

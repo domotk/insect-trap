@@ -134,6 +134,9 @@ class LifeLeftSensor(TrapEntity, SensorEntity):
             ATTR_USED_HOURS: self.tracker.used_hours,
             ATTR_REMAINING_HOURS: self.tracker.remaining_hours,
             ATTR_AVG_HOURS_PER_DAY: self.tracker.avg_hours_per_day,
+            # Whether the two figures below were measured on this trap or taken
+            # from the box, so a card can tell a reading from an assumption.
+            "pace_basis": self.tracker.pace_basis,
             "nights_left": self.tracker.nights_left,
             "depletion_estimate": estimate.isoformat() if estimate else None,
             ATTR_LAST_REPLACED: last.isoformat() if last else None,
@@ -182,7 +185,10 @@ class RemainingHoursSensor(TrapEntity, SensorEntity):
 
 
 class NightsLeftSensor(TrapEntity, SensorEntity):
-    """Nights left at the pace this room really uses it."""
+    """Nights left: at this room's own pace once proven, at the box's until then.
+
+    `pace_basis` on the life-left sensor says which of the two you are reading.
+    """
 
     _attr_icon = "mdi:weather-night"
     _attr_state_class = SensorStateClass.MEASUREMENT

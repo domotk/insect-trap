@@ -86,6 +86,10 @@ from .const import (
     EVENT_LOW,
     EVENT_MODE_DETECTED,
     EVENT_NO_REFILL,
+    PACE_MEASURED,
+    PACE_MIN_DAYS,
+    PACE_MIN_HOURS,
+    PACE_NOMINAL,
     POWER_CLEAR_FAR,
     POWER_CLEAR_NEAR,
     POWER_DOUBT,
@@ -281,32 +285,61 @@ class TrapTracker:
 
     @property
     def avg_hours_per_day(self) -> float | None:
-        """Real usage so far. Needs a little history to mean anything."""
+        """This trap's own pace, or None while the sample is too thin to divide by.
+
+        Both floors are load-bearing and they catch different mistakes: the days
+        floor rejects a refill fitted an hour ago, the hours floor rejects one
+        fitted last week and switched on for twenty seconds. Either one alone
+        lets a pace of 0.01 h/day through, and every figure below is a division
+        by this.
+        """
         days = self.days_elapsed
-        if days < 0.5 or self.used_hours <= 0:
+        if days < PACE_MIN_DAYS or self.used_hours < PACE_MIN_HOURS:
             return None
         return round(self.used_hours / days, 2)
 
     @property
+    def nightly_hours(self) -> float:
+        """The night the box counts in: what "45 nights" is 45 of."""
+        return float(self._conf.get(CONF_HOURS_PER_NIGHT) or DEFAULT_HOURS_PER_NIGHT)
+
+    @property
+    def pace_basis(self) -> str:
+        """Whether the projections below were measured here or read off the box."""
+        return PACE_MEASURED if self.avg_hours_per_day else PACE_NOMINAL
+
+    @property
+    def _pace(self) -> float:
+        """Hours a day to project with. Never zero, so never a division by one."""
+        return self.avg_hours_per_day or self.nightly_hours
+
+    @property
     def nights_left(self) -> float | None:
-        """Nights left at *your* pace, not at the 8 h the box assumes."""
-        avg = self.avg_hours_per_day
+        """Nights left at *your* pace once there is one, at the box's until then.
+
+        This used to go unknown while the pace was still unproven, which sent
+        the card to plain hours on every freshly fitted refill — precisely the
+        moment the manufacturer's own answer is both available and correct.
+        """
         left = self.remaining_hours
-        if not avg or left is None:
+        if left is None:
             return None
-        return round(left / avg, 1)
+        return round(left / self._pace, 1)
 
     @property
     def depletion_estimate(self) -> datetime | None:
-        avg = self.avg_hours_per_day
         left = self.remaining_hours
-        if not avg or left is None:
+        if left is None:
             return None
-        # Rounded to the quarter hour. Unrounded, this moves every single tick
-        # simply because `utcnow()` did, and the recorder stores a new row for a
-        # value whose real information changes about once a day.
-        ends = dt_util.utcnow() + timedelta(days=left / avg)
-        return ends.replace(minute=ends.minute // 15 * 15, second=0, microsecond=0)
+        # Rounded down to the hour. This is `now` plus an offset, so left alone
+        # it advances a minute every minute, and because the recorder rewrites a
+        # sensor's whole attribute bundle whenever one attribute moves, each of
+        # those minutes costs a row — for a date that only ever means "late
+        # October". The quarter hour that used to be here still let some ninety
+        # rows a day through per trap. The hour lets twenty-four, and the card
+        # prints the date without the time, so nothing visible changes.
+        ends = dt_util.utcnow() + timedelta(days=left / self._pace)
+        return ends.replace(minute=0, second=0, microsecond=0)
 
     # --- mode detection: readings ---------------------------------------
 
