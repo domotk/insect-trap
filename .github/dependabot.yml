@@ -1,0 +1,13 @@
+# The components themselves have no runtime dependencies: the integration
+# declares `requirements: []` and the cards are plain ES modules with no
+# imports. The only third-party code in the pipeline is the GitHub Actions
+# used to validate each release, so that is what gets watched.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"

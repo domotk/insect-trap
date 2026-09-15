@@ -1,0 +1,229 @@
+{
+  "version": 8,
+  "comment": "Single source of truth for the product catalogue. catalog.py reads this file, and it is also published to /local/insect-trap-catalog.json so the Lovelace card fills its dropdowns from exactly the same data. A model is the APPLIANCE: it fixes the refill type it accepts and the modes its button offers. A refill is what you fit into it: what it is for, and how long it lasts. 'verified' says whether the figure comes from the manufacturer or a retailer listing.",
+  "defaults": {
+    "hours_per_night": 8.0,
+    "consumable_type": "liquid",
+    "target": "mosquitos",
+    "unit": "nights",
+    "art": {
+      "sprite": "insect-trap-bloom-max-states.png",
+      "aspect": [201, 267],
+      "levels": [0, 20.3, 70.9, 100],
+      "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+      "source": "SUPLENTE, solo para aparatos escritos a mano que no figuran en este catalogo: todos los modelos listados tienen ya su propio bloque 'art'. Existe para que la tarjeta nunca se quede sin dibujo, porque el dibujo vectorial que hacia ese papel se retiro."
+    }
+  },
+  "targets": ["mosquitos", "mosquitos_moscas", "varios"],
+  "brands": [
+    {
+      "brand": "Bloom",
+      "colors": ["#c03030", "#ffffff"],
+      "colors_source": "rojo muestreado de la imagen del aparato; el blanco es el del cuerpo",
+      "models": [
+        {
+          "model": "Max",
+          "consumable_type": "liquid",
+          "note": "El piloto indica el modo: naranja Normal, verde Max.",
+          "art": {
+            "sprite": "insect-trap-bloom-max-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "ilustracion propia: una tira con 4 fotogramas del MISMO dibujo y el deposito a distinto nivel. 'levels' dice que nivel retrata cada uno, medido sobre el pixel verde, y la tarjeta elige el mas cercano. El piloto viene gris a proposito: la tarjeta le pone encima su propio punto, que es lo unico que tiene que cambiar de color."
+          },
+          "modes": [
+            { "id": "normal", "factor": 1.0, "power_ratio": 1.0 },
+            {
+              "id": "max",
+              "factor": 2.05,
+              "power_ratio": 1.17,
+              "note": "La caja: las 45 noches del frasco pasan a 22.",
+              "power_source": "medido en 3 unidades: 7,5 W en Max frente a 6,4 W en Normal, con el mismo frasco"
+            }
+          ],
+          "refills": [
+            {
+              "name": "Moscas y mosquitos · 45 noches",
+              "target": "mosquitos_moscas",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": true,
+              "source": "compraonline.alcampo.es / marvimundo.com (pack de 2 = 90 noches)"
+            },
+            {
+              "name": "Mosquitos común y tigre · 45 noches",
+              "target": "mosquitos",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": true,
+              "source": "dm.henkel-dam.com (frasco 18 ml)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "brand": "Raid",
+      "colors": ["#1d3f94", "#f5c400"],
+      "colors_source": "aproximado de la caja (azul y amarillo), sin muestrear",
+      "models": [
+        {
+          "model": "Eléctrico líquido",
+          "consumable_type": "liquid",
+          "art": {
+            "sprite": "insect-trap-raid-electrico-liquido-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max hasta tener el de este modelo. Al sustituir el PNG revisa 'levels' y 'led', que describen ese dibujo y no este."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Mosquitos común y tigre · 45 noches",
+              "target": "mosquitos",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": true,
+              "source": "amazon.es / delauz.es (pack de 2 = 90 noches)"
+            },
+            {
+              "name": "Mosquitos común y tigre · 30 noches",
+              "target": "mosquitos",
+              "duration": 30.0,
+              "unit": "nights",
+              "verified": true,
+              "source": "foto del envase: «30 Noches* · *Cuando se usa 8 horas por noche»"
+            }
+          ]
+        },
+        {
+          "model": "Night & Day",
+          "consumable_type": "liquid",
+          "art": {
+            "sprite": "insect-trap-raid-night-day-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max hasta tener el de este modelo. Al sustituir el PNG revisa 'levels' y 'led', que describen ese dibujo y no este."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Mosquitos · 10 días x 24 h",
+              "target": "mosquitos",
+              "duration": 240.0,
+              "unit": "hours",
+              "verified": true,
+              "source": "foto del envase: «10 Días x 24 horas · Mosquitos Comunes y Tigre»"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "brand": "Relec",
+      "colors": ["#2e8b46", "#ffffff"],
+      "colors_source": "aproximado de la caja (verde y blanco), sin muestrear",
+      "models": [
+        {
+          "model": "Día y Noche",
+          "consumable_type": "liquid",
+          "art": {
+            "sprite": "insect-trap-relec-dia-y-noche-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max hasta tener el de este modelo. Al sustituir el PNG revisa 'levels' y 'led', que describen ese dibujo y no este."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Mosquitos · 45 noches",
+              "target": "mosquitos",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": true,
+              "note": "Praletrina 1,2 %. No apto para habitaciones con aire acondicionado.",
+              "source": "antimosquitosrelec.es"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "brand": "Genérico",
+      "colors": ["#4a5568", "#ffffff"],
+      "colors_source": "no es una marca real, asi que no hay colores que copiar: un gris pizarra neutro para que la tarjeta no caiga al color del tema y acabe pareciendose a cualquier otra",
+      "models": [
+        {
+          "model": "Difusor líquido",
+          "consumable_type": "liquid",
+          "art": {
+            "sprite": "insect-trap-generico-difusor-liquido-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max hasta tener uno generico. Al sustituir el PNG revisa 'levels' y 'led', que describen ese dibujo y no este."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Recambio líquido",
+              "target": "mosquitos",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": false,
+              "note": "Valor habitual del sector. Ajusta a lo que ponga tu caja."
+            }
+          ]
+        },
+        {
+          "model": "Difusor de pastillas",
+          "consumable_type": "tablet",
+          "art": {
+            "sprite": "insect-trap-generico-difusor-de-pastillas-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max, que es de liquido y no de pastillas. Este es el que mas pide su propio dibujo. Al sustituirlo revisa 'levels' y 'led'."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Pastillas",
+              "target": "mosquitos",
+              "duration": 30.0,
+              "unit": "nights",
+              "verified": false,
+              "note": "Una pastilla por noche es lo común; aquí cuenta el total del paquete."
+            }
+          ]
+        },
+        {
+          "model": "Otro aparato",
+          "consumable_type": "other",
+          "art": {
+            "sprite": "insect-trap-generico-otro-aparato-states.png",
+            "aspect": [201, 267],
+            "levels": [0, 20.3, 70.9, 100],
+            "led": { "x": 69.65, "y": 15.17, "w": 9.45, "h": 8.24 },
+            "source": "PROVISIONAL: copia del dibujo del Bloom Max. Al sustituir el PNG revisa 'levels' y 'led', que describen ese dibujo y no este."
+          },
+          "modes": [],
+          "refills": [
+            {
+              "name": "Otro recambio",
+              "target": "varios",
+              "duration": 45.0,
+              "unit": "nights",
+              "verified": false,
+              "note": "Cualquier recambio que se gaste con las horas de uso."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
