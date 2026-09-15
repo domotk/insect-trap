@@ -54,16 +54,24 @@ Each trap becomes one device, linked to the relay that powers it.
 | `sensor.<trap>_life_left` | Percentage left. The primary sensor: everything else is in its attributes |
 | `sensor.<trap>_hours_used` | Running hours on this refill |
 | `sensor.<trap>_hours_left` | Hours left, in the mode it is set to |
-| `sensor.<trap>_nights_left` | Nights left at your real pace, not the box's 8 h |
+| `sensor.<trap>_nights_left` | Nights left — at your real pace once there is one, at the box's 8 h until then |
 | `sensor.<trap>_runs_out` | Estimated date |
 | `sensor.<trap>_last_replaced` · `sensor.<trap>_refills_logged` | Diagnostic |
 | `binary_sensor.<trap>_replacement_due` | On when there is no refill, it is spent, or it is low |
 | `button.<trap>_new_refill_fitted` · `button.<trap>_refill_taken_out` | The two halves of the pair |
 | `select.<trap>_mode` | Only for appliances whose button offers more than one setting |
 
-`nights_left`, `runs_out` and `avg_hours_per_day` stay empty until there is half
-a day of history behind them. That is deliberate: an average over ten minutes is
-not an average.
+`nights_left` and `runs_out` always answer, but not always from the same place.
+They use this trap's own pace once there is a day of history *and* four hours of
+running behind it, and the figure printed on the box until then. The
+`pace_basis` attribute says which of the two you are reading, and
+`avg_hours_per_day` stays empty until the measured one has earned its place.
+
+Both floors are needed, and they catch different mistakes. A pace over ten
+minutes is not a pace: a refill fitted yesterday and switched on by accident for
+twenty seconds gives 0.01 hours a day, and everything here is a division by
+that — which is how a trap can claim 36 000 nights left and a replacement date
+in the next century.
 
 ## Services
 
