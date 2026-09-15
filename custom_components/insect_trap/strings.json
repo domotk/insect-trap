@@ -1,0 +1,214 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add an insect trap",
+        "data": {
+          "name": "Name",
+          "switch_entity": "Switch that powers it",
+          "brand": "Brand"
+        }
+      },
+      "model": {
+        "title": "Model",
+        "description": "{brand} models. If yours is not listed, type it.",
+        "data": {
+          "model": "Model"
+        }
+      },
+      "details": {
+        "title": "The appliance",
+        "description": "{product}\n\nPrefilled from what we know about that model; correct it if your appliance differs.",
+        "data": {
+          "consumable_type": "Refill type",
+          "mode": "Mode"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "That switch already has a trap attached."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Trap settings",
+        "description": "Changing any of this does not reset the refill count.",
+        "sections": {
+          "connection": {
+            "name": "Connection",
+            "description": "Which socket it is plugged into. That is where the running hours come from, and running hours are what use the refill up.",
+            "data": {
+              "switch_entity": "Switch that powers it"
+            }
+          },
+          "appliance": {
+            "name": "The appliance",
+            "description": "What the trap is. The model decides which refills it takes, and the mode how fast it burns them.",
+            "data": {
+              "brand": "Brand",
+              "model": "Model",
+              "consumable_type": "Refill type",
+              "mode": "Mode"
+            }
+          },
+          "refill": {
+            "name": "The refill",
+            "description": "What is in the socket right now. Changing any of this does NOT restart the count — \"New refill fitted\" is what does that.",
+            "data": {
+              "refill": "Refill",
+              "target": "What it is for",
+              "duration": "Duration on the box",
+              "duration_unit": "Duration unit"
+            }
+          },
+          "detection": {
+            "name": "Reading the mode from the power draw",
+            "description": "The trap's button is physical, so nothing tells Home Assistant it moved — but each mode draws a different, very steady amount of power, and that gives it away.",
+            "data": {
+              "power_entity": "Power meter (leave empty to find it automatically)",
+              "auto_mode": "Change the mode by itself when the reading is unambiguous"
+            }
+          },
+          "warning": {
+            "name": "Replacement warning",
+            "description": "Hours per night is only used when a refill is rated in nights.",
+            "data": {
+              "hours_per_night": "Hours per night",
+              "warn_percent": "Warn when life left drops below",
+              "notify": "Show a notification too"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "switch_in_use": "That switch already powers “{other}”. Two traps counting the same socket would both be wrong, so this one has been left as it was."
+    }
+  },
+  "selector": {
+    "consumable_type": {
+      "options": {
+        "liquid": "Liquid",
+        "tablet": "Tablet",
+        "other": "Other"
+      }
+    },
+    "target": {
+      "options": {
+        "mosquitos": "Mosquitoes",
+        "mosquitos_moscas": "Mosquitoes and flies",
+        "varios": "Several insects"
+      }
+    },
+    "duration_unit": {
+      "options": {
+        "nights": "Nights",
+        "hours": "Running hours"
+      }
+    },
+    "mode": {
+      "options": {
+        "normal": "Normal",
+        "max": "Max"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "life_left": {
+        "name": "Life left"
+      },
+      "used_hours": {
+        "name": "Hours used"
+      },
+      "remaining_hours": {
+        "name": "Hours left"
+      },
+      "nights_left": {
+        "name": "Nights left"
+      },
+      "depletion_estimate": {
+        "name": "Runs out"
+      },
+      "last_replaced": {
+        "name": "Last replaced"
+      },
+      "refills_logged": {
+        "name": "Refills logged"
+      }
+    },
+    "binary_sensor": {
+      "replacement_due": {
+        "name": "Replacement due"
+      }
+    },
+    "button": {
+      "replace": {
+        "name": "New refill fitted"
+      },
+      "remove_refill": {
+        "name": "Refill taken out"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "state": {
+          "normal": "Normal",
+          "max": "Max"
+        }
+      }
+    }
+  },
+  "services": {
+    "replace_refill": {
+      "name": "New refill fitted",
+      "description": "Registers that a new refill has been fitted and starts its count from zero. Only refill data: brand, model and mode belong to the appliance and are changed in the trap's options.",
+      "fields": {
+        "refill": {
+          "name": "Refill",
+          "description": "Which refill was fitted. Leave empty to keep the current one."
+        },
+        "intended_for": {
+          "name": "What it is for",
+          "description": "The same appliance takes refills for different insects."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "The number printed on the box."
+        },
+        "duration_unit": {
+          "name": "Duration unit",
+          "description": "Whether that number is nights or plain running hours."
+        },
+        "reset": {
+          "name": "Start the count from zero",
+          "description": "On by default. Turn it off to correct a detail without losing the hours already counted."
+        },
+        "fitted_at": {
+          "name": "Fitted at",
+          "description": "When it actually went in. Empty means now. Only the date moves; the count still starts at zero."
+        },
+        "warn_percent": {
+          "name": "Warn below",
+          "description": "Life left at which the trap starts asking for a new refill."
+        }
+      }
+    },
+    "remove_refill": {
+      "name": "Refill taken out",
+      "description": "Records that the socket is empty. The trap stops reporting a percentage and says it has no refill, which is what it should say when there is nothing left in it to evaporate."
+    },
+    "recalibrate": {
+      "name": "Relearn the power reference",
+      "description": "Forgets the draw this trap learned as its baseline and learns it again from whatever mode it is set to now. Use it when the reference was learned while the mode was wrong, which poisons every later judgement."
+    }
+  },
+  "issues": {
+    "v1_storage": {
+      "title": "{name}: confirm which refill is fitted",
+      "description": "This trap was counting with an older format that had no way to say whether a refill was actually fitted, so its {hours} h tally could not be carried over. It now reports “no refill” rather than a comfortable 100 %.\n\nPress “New refill fitted” once and this goes away."
+    }
+  }
+}

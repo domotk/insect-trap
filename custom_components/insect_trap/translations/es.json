@@ -1,0 +1,214 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Añadir una trampa de insectos",
+        "data": {
+          "name": "Nombre",
+          "switch_entity": "Interruptor que la alimenta",
+          "brand": "Marca"
+        }
+      },
+      "model": {
+        "title": "Modelo",
+        "description": "Modelos de {brand}. Si el tuyo no está, escríbelo.",
+        "data": {
+          "model": "Modelo"
+        }
+      },
+      "details": {
+        "title": "El aparato",
+        "description": "{product}\n\nRellenado con lo que sabemos de ese modelo; corrígelo si tu aparato es distinto.",
+        "data": {
+          "consumable_type": "Tipo de recambio",
+          "mode": "Modo"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Ese interruptor ya tiene una trampa asociada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuración de la trampa",
+        "description": "Cambiar cualquiera de estos datos no reinicia la cuenta de la recarga.",
+        "sections": {
+          "connection": {
+            "name": "Conexión",
+            "description": "De qué enchufe cuelga. De ahí salen las horas que funciona, que es lo que gasta la recarga.",
+            "data": {
+              "switch_entity": "Interruptor que la alimenta"
+            }
+          },
+          "appliance": {
+            "name": "El aparato",
+            "description": "Qué trampa es. El modelo determina el tipo de recambio que admite, y el modo, lo deprisa que lo gasta.",
+            "data": {
+              "brand": "Marca",
+              "model": "Modelo",
+              "consumable_type": "Tipo de recambio",
+              "mode": "Modo"
+            }
+          },
+          "refill": {
+            "name": "La recarga",
+            "description": "Qué hay puesto ahora mismo. Cambiar cualquiera de estos datos NO reinicia la cuenta — para eso está «Recarga nueva puesta».",
+            "data": {
+              "refill": "Recarga",
+              "target": "Para qué es",
+              "duration": "Duración de la caja",
+              "duration_unit": "Unidad de la duración"
+            }
+          },
+          "detection": {
+            "name": "Leer el modo por el consumo",
+            "description": "El botón de la trampa es físico, así que nada le dice a Home Assistant que se ha movido — pero cada modo consume una cantidad distinta y muy estable, y eso lo delata.",
+            "data": {
+              "power_entity": "Medidor de consumo (vacío para buscarlo solo)",
+              "auto_mode": "Cambiar el modo por su cuenta cuando la lectura sea inequívoca"
+            }
+          },
+          "warning": {
+            "name": "Aviso de recambio",
+            "description": "Las horas por noche solo se usan cuando una recarga viene medida en noches.",
+            "data": {
+              "hours_per_night": "Horas por noche",
+              "warn_percent": "Avisar cuando la vida restante baje de",
+              "notify": "Mostrar además una notificación"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "switch_in_use": "Ese interruptor ya alimenta a «{other}». Dos trampas contando el mismo enchufe darían las dos cifras falsas, así que esta se ha quedado como estaba."
+    }
+  },
+  "selector": {
+    "consumable_type": {
+      "options": {
+        "liquid": "Líquido",
+        "tablet": "Pastilla",
+        "other": "Otro"
+      }
+    },
+    "target": {
+      "options": {
+        "mosquitos": "Mosquitos",
+        "mosquitos_moscas": "Mosquitos y moscas",
+        "varios": "Varios insectos"
+      }
+    },
+    "duration_unit": {
+      "options": {
+        "nights": "Noches",
+        "hours": "Horas de funcionamiento"
+      }
+    },
+    "mode": {
+      "options": {
+        "normal": "Normal",
+        "max": "Max"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "life_left": {
+        "name": "Vida restante"
+      },
+      "used_hours": {
+        "name": "Horas usadas"
+      },
+      "remaining_hours": {
+        "name": "Horas restantes"
+      },
+      "nights_left": {
+        "name": "Noches restantes"
+      },
+      "depletion_estimate": {
+        "name": "Se agota"
+      },
+      "last_replaced": {
+        "name": "Último cambio"
+      },
+      "refills_logged": {
+        "name": "Recargas registradas"
+      }
+    },
+    "binary_sensor": {
+      "replacement_due": {
+        "name": "Recambio necesario"
+      }
+    },
+    "button": {
+      "replace": {
+        "name": "Recarga nueva puesta"
+      },
+      "remove_refill": {
+        "name": "Recarga retirada"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Modo",
+        "state": {
+          "normal": "Normal",
+          "max": "Max"
+        }
+      }
+    }
+  },
+  "services": {
+    "replace_refill": {
+      "name": "Recarga nueva puesta",
+      "description": "Registra que se ha puesto una recarga nueva y empieza su cuenta desde cero. Solo datos de la recarga: marca, modelo y modo son del aparato y se cambian en las opciones de la trampa.",
+      "fields": {
+        "refill": {
+          "name": "Recarga",
+          "description": "Qué recarga se ha puesto. Déjalo vacío para mantener la actual."
+        },
+        "intended_for": {
+          "name": "Para qué es",
+          "description": "El mismo aparato admite recargas para distintos insectos."
+        },
+        "duration": {
+          "name": "Duración",
+          "description": "El número que viene impreso en la caja."
+        },
+        "duration_unit": {
+          "name": "Unidad de la duración",
+          "description": "Si ese número son noches u horas de funcionamiento."
+        },
+        "reset": {
+          "name": "Empezar la cuenta de cero",
+          "description": "Activado por defecto. Desactívalo para corregir un dato sin perder las horas ya contadas."
+        },
+        "fitted_at": {
+          "name": "Puesta el",
+          "description": "Cuándo se puso de verdad. Vacío significa ahora. Solo mueve la fecha; la cuenta sigue empezando en cero."
+        },
+        "warn_percent": {
+          "name": "Avisar por debajo de",
+          "description": "Vida restante a la que la trampa empieza a pedir recambio."
+        }
+      }
+    },
+    "remove_refill": {
+      "name": "Recarga retirada",
+      "description": "Registra que el hueco está vacío. La trampa deja de dar un porcentaje y dice que no tiene recarga, que es lo que debe decir cuando no hay nada dentro que evaporar."
+    },
+    "recalibrate": {
+      "name": "Reaprender la referencia de consumo",
+      "description": "Olvida el consumo que la trampa aprendió como referencia y lo vuelve a aprender del modo en el que esté ahora. Útil si la referencia se aprendió con el modo equivocado, cosa que envenena todas las decisiones posteriores."
+    }
+  },
+  "issues": {
+    "v1_storage": {
+      "title": "{name}: confirma qué recarga lleva puesta",
+      "description": "Esta trampa contaba con un formato anterior que no sabía si había recarga puesta, así que sus {hours} h contadas no se han podido arrastrar. Ahora dice «sin recarga» en lugar de un cómodo 100 %.\n\nPulsa «Recarga nueva puesta» una vez y este aviso desaparece."
+    }
+  }
+}

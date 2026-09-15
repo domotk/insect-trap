@@ -1,0 +1,55 @@
+# Only the shape of each service lives here. The names and the
+# descriptions are in strings.json, where Home Assistant expects them and
+# where they can be translated: two copies of the same sentence drift.
+replace_refill:
+  target:
+    entity:
+      integration: insect_trap
+  fields:
+    refill:
+      selector:
+        text:
+    intended_for:
+      selector:
+        select:
+          options:
+            - mosquitos
+            - mosquitos_moscas
+            - varios
+    duration:
+      selector:
+        number:
+          min: 1
+          max: 10000
+          step: 1
+          mode: box
+    duration_unit:
+      selector:
+        select:
+          options:
+            - nights
+            - hours
+    reset:
+      selector:
+        boolean:
+    fitted_at:
+      selector:
+        datetime:
+    warn_percent:
+      selector:
+        number:
+          min: 0
+          max: 50
+          step: 1
+          mode: slider
+          unit_of_measurement: "%"
+
+recalibrate:
+  target:
+    entity:
+      integration: insect_trap
+
+remove_refill:
+  target:
+    entity:
+      integration: insect_trap
