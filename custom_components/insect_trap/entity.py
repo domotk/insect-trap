@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -12,25 +14,37 @@ from .const import CONF_BRAND, CONF_MODEL, CONF_SWITCH, DOMAIN
 from .tracker import TrapTracker
 
 
-def _via_device_id(hass: HomeAssistant, source_entity: str) -> str | None:
-    """The registry id of the device that owns the relay.
+# `via_device_id` arrived in DeviceInfo after the minimum in hacs.json; older
+# releases reject a DeviceInfo carrying a key they do not know, and the entity
+# never gets created. There the (domain, identifier) tuple is the only form.
+_HAS_VIA_DEVICE_ID = "via_device_id" in DeviceInfo.__annotations__
+
+
+def _via_device(hass: HomeAssistant, source_entity: str) -> dict[str, Any]:
+    """The DeviceInfo key that links the trap to the device owning the relay.
 
     The relay belongs to whatever integration exposes it — a Shelly plug here —
     and Home Assistant only lists an entity under its own device. Linking the
     two puts the plug one click away from the trap and makes the relationship
     visible instead of implied.
 
-    Note this is the registry's own device id, not the (domain, identifier)
-    tuple: that older form is deprecated and Home Assistant ignores it.
+    Where Home Assistant offers it this is the registry's own device id: the
+    (domain, identifier) tuple is deprecated there. Older releases only know
+    the tuple, so they get one of the owning device's identifiers instead.
     """
     entity = er.async_get(hass).async_get(source_entity)
     if entity is None or entity.device_id is None:
-        return None
+        return {}
     # Only link to something that really exists, or the device page would point
     # at nothing.
-    if dr.async_get(hass).async_get(entity.device_id) is None:
-        return None
-    return entity.device_id
+    device = dr.async_get(hass).async_get(entity.device_id)
+    if device is None:
+        return {}
+    if _HAS_VIA_DEVICE_ID:
+        return {"via_device_id": device.id}
+    if not device.identifiers:
+        return {}
+    return {"via_device": min(device.identifiers)}
 
 
 class TrapEntity(Entity):
@@ -50,7 +64,7 @@ class TrapEntity(Entity):
             name=tracker.entry.title,
             manufacturer=conf.get(CONF_BRAND) or "Insect Traps",
             model=conf.get(CONF_MODEL) or None,
-            via_device_id=_via_device_id(tracker.hass, conf.get(CONF_SWITCH, "")),
+            **_via_device(tracker.hass, conf.get(CONF_SWITCH, "")),
         )
 
     async def async_added_to_hass(self) -> None:
