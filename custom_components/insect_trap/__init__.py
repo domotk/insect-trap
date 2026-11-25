@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import logging
 from pathlib import Path
 from typing import Any
@@ -98,6 +99,19 @@ OPTIONAL_KEYS = (
     CONF_DURATION_UNIT,
     CONF_WARN_PERCENT,
 )
+
+
+# Home Assistant deprecated the leading `hass` argument and stopped accepting it
+# in 2026.10, where the call itself carries it. Asked once, from the signature,
+# so the same code runs on the minimum in hacs.json and on current releases.
+_EXTRACT_TAKES_HASS = "hass" in inspect.signature(async_extract_entity_ids).parameters
+
+
+async def _extract_entity_ids(hass: HomeAssistant, call: ServiceCall) -> set[str]:
+    """Every entity id a service call targets, on any supported release."""
+    if _EXTRACT_TAKES_HASS:
+        return await async_extract_entity_ids(hass, call)
+    return await async_extract_entity_ids(call)
 
 
 async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -257,7 +271,7 @@ def _async_register_services(hass: HomeAssistant) -> None:
         """
         registry = er.async_get(hass)
         found: dict[str, TrapTracker] = {}
-        for entity_id in await async_extract_entity_ids(hass, call):
+        for entity_id in await _extract_entity_ids(hass, call):
             entity = registry.async_get(entity_id)
             if entity is None or entity.config_entry_id is None:
                 continue
